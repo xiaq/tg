@@ -1,4 +1,4 @@
-// tgbot is a package for writing Telegram bots using the official API.
+// Package tgbot provides a framework for Telegram bots using the official API.
 package tgbot
 
 //go:generate ./objects.py
