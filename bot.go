@@ -18,9 +18,9 @@ var (
 	GetUpdatesTimeout int           = 3 //60
 )
 
-type UpdateHandler func(*BasicBot, *Update)
+type UpdateHandler func(*Bot, *Update)
 
-type BasicBot struct {
+type Bot struct {
 	Name          string
 	APIURL        string
 	UpdateHandler UpdateHandler
@@ -47,7 +47,7 @@ func (r *ReplyNotOk) Error() string {
 	return fmt.Sprintf("reply not ok: %s (code = %d)", r.Description, r.ErrorCode)
 }
 
-func (b *BasicBot) Get(loc string, q Query, result interface{}) error {
+func (b *Bot) Get(loc string, q Query, result interface{}) error {
 	urltail := loc + "?" + q.Encode()
 	log.Println("GET", urltail)
 	url := b.APIURL + urltail
@@ -79,7 +79,7 @@ func incCooldown(cd time.Duration) time.Duration {
 }
 
 // Main is the main loop.
-func (b *BasicBot) Main() {
+func (b *Bot) Main() {
 	offset := 0
 	for {
 		var lastCooldown time.Duration
@@ -109,7 +109,7 @@ func (b *BasicBot) Main() {
 }
 
 func Main(name, token string, mh UpdateHandler) {
-	b := &BasicBot{name, APIURLBase + token, mh, 0}
+	b := &Bot{name, APIURLBase + token, mh, 0}
 	b.Main()
 }
 
