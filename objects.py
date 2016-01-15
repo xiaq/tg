@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import sys
 from collections import namedtuple
 
@@ -86,3 +87,4 @@ def main(out=sys.stdout, cache=''):
 
 if __name__ == '__main__':
     main(open('objects.go', 'w'), sys.argv[1] if len(sys.argv) >= 2 else '')
+    os.system('gofmt -w objects.go')
