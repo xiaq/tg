@@ -1,11 +1,13 @@
 package tg
 
 type CommandHandler func(b *CommandBot, args string, msg *Message)
+type AnyCommandHandler func(b *CommandBot, cmd, args string, msg *Message)
 
 // CommandBot only handles commands.
 type CommandBot struct {
-	Bot
-	CommandHandlers map[string][]CommandHandler
+	*Bot
+	Handlers    map[string][]CommandHandler
+	AnyHandlers []AnyCommandHandler
 }
 
 func split(text string, sep byte) (string, string) {
@@ -35,7 +37,10 @@ func (b *CommandBot) HandleUpdate(_ *Bot, up *Update) {
 		// Not addressed to me
 		return
 	}
-	chs, ok := b.CommandHandlers[cmd]
+	for _, ach := range b.AnyHandlers {
+		ach(b, cmd, args, up.Message)
+	}
+	chs, ok := b.Handlers[cmd]
 	if !ok {
 		return
 	}
@@ -45,11 +50,16 @@ func (b *CommandBot) HandleUpdate(_ *Bot, up *Update) {
 }
 
 func (b *CommandBot) OnCommand(cmd string, ch CommandHandler) {
-	b.CommandHandlers[cmd] = append(b.CommandHandlers[cmd], ch)
+	b.Handlers[cmd] = append(b.Handlers[cmd], ch)
+}
+
+func (b *CommandBot) OnAnyCommand(ach AnyCommandHandler) {
+	b.AnyHandlers = append(b.AnyHandlers, ach)
 }
 
 func NewCommandBot(name, token string) *CommandBot {
-	b := &CommandBot{*NewBot(name, token), make(map[string][]CommandHandler)}
+	b := &CommandBot{NewBot(name, token),
+		make(map[string][]CommandHandler), nil}
 	b.OnUpdate(b.HandleUpdate)
 	return b
 }
