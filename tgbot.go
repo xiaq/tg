@@ -99,9 +99,11 @@ func (b *Basic) Main() {
 			continue
 		}
 		log.Printf("%d update(s)\n", len(updates))
-		for _, update := range updates {
-			offset = update.UpdateID + 1
-			if b.UpdateHandler != nil {
+		if len(updates) > 0 {
+			offset = update[len(update)-1].UpdateID + 1
+		}
+		if b.UpdateHandler != nil {
+			for _, update := range updates {
 				b.UpdateHandler(b, &update)
 			}
 		}
