@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -21,10 +19,10 @@ var (
 type UpdateHandler func(*Bot, *Update)
 
 type Bot struct {
-	Name          string
-	APIURL        string
-	UpdateHandler UpdateHandler
-	Cooldown      time.Duration
+	Name           string
+	APIURL         string
+	UpdateHandlers []UpdateHandler
+	Cooldown       time.Duration
 }
 
 var (
@@ -78,6 +76,10 @@ func incCooldown(cd time.Duration) time.Duration {
 	return cd * time.Duration(CooldownScale)
 }
 
+func (b *Bot) OnUpdate(uh UpdateHandler) {
+	b.UpdateHandlers = append(b.UpdateHandlers, uh)
+}
+
 // Main is the main loop.
 func (b *Bot) Main() {
 	offset := 0
@@ -100,24 +102,16 @@ func (b *Bot) Main() {
 		if len(updates) > 0 {
 			offset = updates[len(updates)-1].UpdateID + 1
 		}
-		if b.UpdateHandler != nil {
+		if len(b.UpdateHandlers) > 0 {
 			for _, update := range updates {
-				b.UpdateHandler(b, &update)
+				for _, uh := range b.UpdateHandlers {
+					uh(b, &update)
+				}
 			}
 		}
 	}
 }
 
-func Main(name, token string, mh UpdateHandler) {
-	b := &Bot{name, APIURLBase + token, mh, 0}
-	b.Main()
-}
-
-func MainWithTokenFile(name, fname string, mh UpdateHandler) {
-	buf, err := ioutil.ReadFile(fname)
-	if err != nil {
-		log.Fatalf("cannot read token file: %s", err)
-	}
-	token := strings.TrimSpace(string(buf))
-	Main(name, token, mh)
+func NewBot(name, token string) *Bot {
+	return &Bot{name, APIURLBase + token, nil, 0}
 }
