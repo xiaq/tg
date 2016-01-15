@@ -1,4 +1,4 @@
-package tgbot
+package tg
 
 import (
 	"encoding/json"
@@ -18,9 +18,9 @@ var (
 	GetUpdatesTimeout int           = 3 //60
 )
 
-type UpdateHandler func(*Basic, *Update)
+type UpdateHandler func(*BasicBot, *Update)
 
-type Basic struct {
+type BasicBot struct {
 	Name          string
 	APIURL        string
 	UpdateHandler UpdateHandler
@@ -47,7 +47,7 @@ func (r *ReplyNotOk) Error() string {
 	return fmt.Sprintf("reply not ok: %s (code = %d)", r.Description, r.ErrorCode)
 }
 
-func (b *Basic) Get(loc string, q Query, result interface{}) error {
+func (b *BasicBot) Get(loc string, q Query, result interface{}) error {
 	urltail := loc + "?" + q.Encode()
 	log.Println("GET", urltail)
 	url := b.APIURL + urltail
@@ -79,7 +79,7 @@ func incCooldown(cd time.Duration) time.Duration {
 }
 
 // Main is the main loop.
-func (b *Basic) Main() {
+func (b *BasicBot) Main() {
 	offset := 0
 	for {
 		var lastCooldown time.Duration
@@ -98,7 +98,7 @@ func (b *Basic) Main() {
 		}
 		log.Printf("%d update(s)\n", len(updates))
 		if len(updates) > 0 {
-			offset = update[len(update)-1].UpdateID + 1
+			offset = updates[len(updates)-1].UpdateID + 1
 		}
 		if b.UpdateHandler != nil {
 			for _, update := range updates {
@@ -109,7 +109,7 @@ func (b *Basic) Main() {
 }
 
 func Main(name, token string, mh UpdateHandler) {
-	b := &Basic{name, APIURLBase + token, mh, 0}
+	b := &BasicBot{name, APIURLBase + token, mh, 0}
 	b.Main()
 }
 
