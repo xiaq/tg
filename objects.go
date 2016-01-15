@@ -1,5 +1,6 @@
-// GENERATED AUTOMATICALLY BY objects.py
 package tgbot
+
+// GENERATED AUTOMATICALLY BY objects.py
 
 type Update struct {
 	UpdateID int `json:"update_id"`

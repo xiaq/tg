@@ -45,8 +45,8 @@ def main(out=sys.stdout, cache=''):
     else:
         import requests
         content = requests.get('https://core.telegram.org/bots/api').content
-    out.write('// GENERATED AUTOMATICALLY BY objects.py\n'
-              'package tgbot\n\n')
+    out.write('package tgbot\n\n'
+              '// GENERATED AUTOMATICALLY BY objects.py\n\n')
     tree = html.document_fromstring(content)
     h4s = tree.xpath('//h4')
     for h4 in h4s:
