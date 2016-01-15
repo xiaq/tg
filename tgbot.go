@@ -49,8 +49,8 @@ func (r *ReplyNotOk) Error() string {
 	return fmt.Sprintf("reply not ok: %s (code = %d)", r.Description, r.ErrorCode)
 }
 
-func (b *Basic) get(loc string, q query, result interface{}) error {
-	urltail := loc + "?" + q.encode()
+func (b *Basic) Get(loc string, q Query, result interface{}) error {
+	urltail := loc + "?" + q.Encode()
 	log.Println("GET", urltail)
 	url := b.APIURL + urltail
 	resp, err := http.Get(url)
@@ -92,7 +92,7 @@ func (b *Basic) Main() {
 			b.Cooldown = 0
 		}
 		var updates []Update
-		err := b.get("/getUpdates", query{"offset": offset, "timeout": GetUpdatesTimeout}, &updates)
+		err := b.Get("/getUpdates", Query{"offset": offset, "timeout": GetUpdatesTimeout}, &updates)
 		if err != nil {
 			log.Println("error with /getUpdates:", err)
 			b.Cooldown = incCooldown(lastCooldown)

@@ -9,9 +9,9 @@ import (
 )
 
 // query represents query parameters because I find url.Values not handy enough.
-type query map[string]interface{}
+type Query map[string]interface{}
 
-func (q query) encode() string {
+func (q Query) Encode() string {
 	var buf bytes.Buffer
 	first := true
 	write := func(k string, v interface{}) {
