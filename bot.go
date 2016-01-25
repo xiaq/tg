@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"os"
 )
 
 var (
@@ -112,6 +113,18 @@ func (b *Bot) Main() {
 	}
 }
 
-func NewBot(name, token string) *Bot {
-	return &Bot{name, APIURLBase + token, nil, 0}
+func (b *Bot) getUsername() string {
+	var me User
+	err := b.Get("/getMe", Query{}, &me)
+	if err != nil {
+		log.Println("error when retrieving username:", err)
+		os.Exit(1)
+	}
+	return *me.Username
+}
+
+func NewBot(token string) *Bot {
+	bot := Bot{"", APIURLBase + token, nil, 0}
+	bot.Name = bot.getUsername()
+	return &bot
 }

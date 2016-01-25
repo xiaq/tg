@@ -57,8 +57,8 @@ func (b *CommandBot) OnAnyCommand(ach AnyCommandHandler) {
 	b.AnyHandlers = append(b.AnyHandlers, ach)
 }
 
-func NewCommandBot(name, token string) *CommandBot {
-	b := &CommandBot{NewBot(name, token),
+func NewCommandBot(token string) *CommandBot {
+	b := &CommandBot{NewBot(token),
 		make(map[string][]CommandHandler), nil}
 	b.OnUpdate(b.HandleUpdate)
 	return b
