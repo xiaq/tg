@@ -8,7 +8,7 @@ from lxml import html
 
 
 type_map = {
-    'Integer': 'int',
+    'Integer': 'int64',
     'String': 'string',
     'True': 'bool',
     'Boolean': 'bool',

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"os"
+	"time"
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 type Reply struct {
 	OK          bool        `json:"ok"`
 	Description string      `json:"description"`
-	ErrorCode   int         `json:"error_code"`
+	ErrorCode   int64       `json:"error_code"`
 	Result      interface{} `json:"result"`
 }
 
@@ -83,7 +83,7 @@ func (b *Bot) OnUpdate(uh UpdateHandler) {
 
 // Main is the main loop.
 func (b *Bot) Main() {
-	offset := 0
+	var offset int64
 	for {
 		var lastCooldown time.Duration
 		if b.Cooldown > 0 {
