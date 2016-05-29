@@ -14,7 +14,7 @@ var (
 	APIURLBase        string        = "https://api.telegram.org/bot"
 	CooldownStart     time.Duration = time.Second
 	CooldownScale     int           = 2
-	GetUpdatesTimeout int           = 60
+	GetUpdatesTimeout int           = 3600
 )
 
 type UpdateHandler func(*Bot, *Update)
