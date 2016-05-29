@@ -1,5 +1,11 @@
 package tg
 
+import (
+	"log"
+	"strings"
+	"unicode"
+)
+
 type CommandHandler func(b *CommandBot, args string, msg *Message)
 type AnyCommandHandler func(b *CommandBot, cmd, args string, msg *Message)
 
@@ -32,8 +38,10 @@ func (b *CommandBot) HandleUpdate(_ *Bot, up *Update) {
 		return
 	}
 	cmd, args := Split(text[1:len(text)], ' ')
+	cmd = strings.TrimRightFunc(cmd, unicode.IsSpace)
 	cmd, to := Split(cmd, '@')
 	if to != "" && to != b.Name {
+		log.Println("addressed not to me, but to", to)
 		// Not addressed to me
 		return
 	}
@@ -42,6 +50,7 @@ func (b *CommandBot) HandleUpdate(_ *Bot, up *Update) {
 	}
 	chs, ok := b.Handlers[cmd]
 	if !ok {
+		log.Printf("unknown command %q", cmd)
 		return
 	}
 	for _, ch := range chs {
